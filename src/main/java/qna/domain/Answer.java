@@ -1,10 +1,14 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.ToString;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import java.util.Objects;
 
+@ToString
+@Getter
 public class Answer {
     private Long id;
     private Long writerId;
@@ -40,54 +44,7 @@ public class Answer {
         this.questionId = question.getId();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
+    public void changeDeleted(boolean deleted) {
         this.deleted = deleted;
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
     }
 }

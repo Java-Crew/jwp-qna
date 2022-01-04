@@ -1,8 +1,13 @@
 package qna.domain;
 
+import lombok.Getter;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@ToString
+@Getter
 public class DeleteHistory {
     private Long id;
     private ContentType contentType;
@@ -31,16 +36,5 @@ public class DeleteHistory {
     @Override
     public int hashCode() {
         return Objects.hash(id, contentType, contentId, deletedById);
-    }
-
-    @Override
-    public String toString() {
-        return "DeleteHistory{" +
-                "id=" + id +
-                ", contentType=" + contentType +
-                ", contentId=" + contentId +
-                ", deletedById=" + deletedById +
-                ", createDate=" + createDate +
-                '}';
     }
 }

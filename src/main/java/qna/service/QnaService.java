@@ -1,7 +1,5 @@
 package qna.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
@@ -16,7 +14,6 @@ import java.util.List;
 
 @Service
 public class QnaService {
-    private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
     private QuestionRepository questionRepository;
     private AnswerRepository answerRepository;
@@ -49,10 +46,10 @@ public class QnaService {
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
+        question.changeDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
         for (Answer answer : answers) {
-            answer.setDeleted(true);
+            answer.changeDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
         }
         deleteHistoryService.saveAll(deleteHistories);
