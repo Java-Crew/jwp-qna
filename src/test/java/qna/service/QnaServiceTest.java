@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class QnaServiceTest {
+
     @Mock
     private QuestionRepository questionRepository;
 
@@ -36,12 +37,23 @@ class QnaServiceTest {
     private QnaService qnaService;
 
     private Question question;
+
     private Answer answer;
 
     @BeforeEach
     public void setUp() throws Exception {
-        question = new Question(1L, "title1", "contents1").writeBy(UserTest.JAVAJIGI);
-        answer = new Answer(1L, UserTest.JAVAJIGI, question, "Answers Contents1");
+        question = Question.builder()
+                .title("title1")
+                .contents("contents1")
+                .writerId(UserTest.JAVAJIGI.getId())
+                .build();
+
+        answer = Answer.builder()
+                .writer(UserTest.JAVAJIGI)
+                .question(question)
+                .contents("Answers Contents1")
+                .build();
+
         question.addAnswer(answer);
     }
 
@@ -79,7 +91,11 @@ class QnaServiceTest {
 
     @Test
     public void delete_답변_중_다른_사람이_쓴_글() throws Exception {
-        Answer answer2 = new Answer(2L, UserTest.SANJIGI, QuestionTest.Q1, "Answers Contents1");
+        Answer answer2 = Answer.builder()
+                .writer(UserTest.JAVAJIGI)
+                .question(question)
+                .contents("Answers Contents1")
+                .build();
         question.addAnswer(answer2);
 
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));

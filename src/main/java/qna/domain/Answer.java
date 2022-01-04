@@ -1,28 +1,38 @@
 package qna.domain;
 
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @ToString
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class Answer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long writerId;
+
     private Long questionId;
+
+    @Lob
     private String contents;
+
+    @Column(nullable = false)
     private boolean deleted = false;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
-
+    @Builder
+    public Answer(User writer, Question question, String contents, boolean deleted, LocalDateTime createdAt) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -34,6 +44,8 @@ public class Answer {
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;
+        this.deleted = deleted;
+        this.createdAt = createdAt;
     }
 
     public boolean isOwner(User writer) {
