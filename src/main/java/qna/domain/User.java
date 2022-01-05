@@ -36,7 +36,8 @@ public class User {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder
-    public User(String userId, String password, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(Long id, String userId, String password, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;

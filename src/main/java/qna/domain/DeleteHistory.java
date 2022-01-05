@@ -26,7 +26,7 @@ public class DeleteHistory {
 
     private Long deletedById;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     @Builder
     public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
@@ -39,13 +39,16 @@ public class DeleteHistory {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
-        return id != null && Objects.equals(id, that.id);
+        return Objects.equals(id, that.id) &&
+                contentType == that.contentType &&
+                Objects.equals(contentId, that.contentId) &&
+                Objects.equals(deletedById, that.deletedById);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id, contentType, contentId, deletedById);
     }
 }

@@ -1,13 +1,15 @@
-package qna.domain;
+package qna.fixture;
+
+import qna.domain.Question;
 
 import java.time.LocalDateTime;
 
-public class QuestionTest {
+public class QuestionFixture {
 
     public static final Question Q1 = Question.builder()
             .title("title1")
             .contents("contents1")
-            .writerId(UserTest.JAVAJIGI.getId())
+            .writerId(UserFixture.JAVAJIGI.getId())
             .createdAt(LocalDateTime.now())
             .deleted(false)
             .build();
@@ -15,7 +17,7 @@ public class QuestionTest {
     public static final Question Q2 = Question.builder()
             .title("title2")
             .contents("contents2")
-            .writerId(UserTest.SANJIGI.getId())
+            .writerId(UserFixture.SANJIGI.getId())
             .createdAt(LocalDateTime.now())
             .deleted(false)
             .build();

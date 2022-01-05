@@ -1,6 +1,7 @@
 package qna.domain;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -28,11 +29,10 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Builder
-    public Answer(User writer, Question question, String contents, boolean deleted, LocalDateTime createdAt) {
+    public Answer(Long id, User writer, Question question, String contents, boolean deleted, LocalDateTime createdAt) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -41,6 +41,7 @@ public class Answer {
             throw new NotFoundException();
         }
 
+        this.id = id;
         this.writerId = writer.getId();
         this.questionId = question.getId();
         this.contents = contents;

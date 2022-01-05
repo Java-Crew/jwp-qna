@@ -1,5 +1,6 @@
 package qna.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import qna.CannotDeleteException;
@@ -12,18 +13,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class QnaService {
 
-    private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
-    private DeleteHistoryService deleteHistoryService;
+    private final QuestionRepository questionRepository;
 
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
-        this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
-        this.deleteHistoryService = deleteHistoryService;
-    }
+    private final AnswerRepository answerRepository;
+
+    private final DeleteHistoryService deleteHistoryService;
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {

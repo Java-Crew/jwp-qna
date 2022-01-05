@@ -1,9 +1,11 @@
 package qna.domain;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @ToString
 @Getter
@@ -26,13 +28,13 @@ public class Question {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @Builder
-    public Question(String title, String contents, Long writerId, boolean deleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Question(Long id, String title, String contents, Long writerId, boolean deleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.title = title;
         this.contents = contents;
         this.writerId = writerId;
