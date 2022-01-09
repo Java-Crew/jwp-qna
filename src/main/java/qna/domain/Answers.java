@@ -41,8 +41,4 @@ public class Answers {
     public void addAnswer(Answer answer) {
         answerGroup.add(answer);
     }
-
-    public List<Answer> answerGroup() {
-        return new ArrayList<>(answerGroup);
-    }
 }

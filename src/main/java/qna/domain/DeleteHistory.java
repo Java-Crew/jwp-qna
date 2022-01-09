@@ -1,15 +1,15 @@
 package qna.domain;
 
-import javax.persistence.ManyToOne;
-import lombok.*;
-import org.hibernate.Hibernate;
-
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
-import java.util.Objects;
+import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import qna.common.domain.BaseTimeEntity;
 
 @ToString
@@ -25,27 +25,25 @@ public class DeleteHistory extends BaseTimeEntity {
     @ManyToOne
     private Content content;
 
-    @ManyToOne
-    private User deletedByUser;
-
-    @Builder
-    public DeleteHistory(Content content, User deletedByUser) {
+    public DeleteHistory(Content content) {
         this.content = content;
-        this.deletedByUser = deletedByUser;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(deletedByUser, that.deletedByUser);
+            Objects.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, deletedByUser);
+        return Objects.hash(id, content);
     }
 }
