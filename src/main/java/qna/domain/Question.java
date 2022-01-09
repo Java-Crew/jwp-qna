@@ -1,10 +1,20 @@
 package qna.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import lombok.*;
-
-import javax.persistence.*;
+import java.util.Collections;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import qna.common.domain.BaseTimeEntity;
 import qna.exception.ExceptionWithMessageAndCode;
 
@@ -27,35 +37,33 @@ public class Question extends BaseTimeEntity {
     @ManyToOne
     private User writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Answer> answerGroup;
+    @Embedded
+    private Answers answers;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Builder
-    public Question(Long id, String title, String contents, User writer, boolean deleted) {
+    public Question(Long id, String title, String contents, Answers answers, User writer, boolean deleted) {
         this.id = id;
         this.title = title;
         this.contents = contents;
         this.writer = writer;
-        this.answerGroup = new ArrayList<>();
         this.deleted = deleted;
+
+        if (Objects.isNull(answers)) {
+            this.answers = new Answers(Collections.emptyList());
+        }
     }
 
     public void delete(User user) {
-        validateDeleteQuestion(user);
-    }
-
-    private void validateDeleteQuestion(User user) {
         if (!isOwner(user)) {
             throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException();
         }
 
-        Answers answers = findQuestionsDeletedFalse();
-        if (answers.existAnotherWriterOfAnswers(user)) {
-            throw ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException();
-        }
+        answers.validateDeleteAnswers(user);
+        deleted = true;
+        answers = answers.deleteAll();
     }
 
     private boolean isOwner(User writer) {
@@ -64,14 +72,6 @@ public class Question extends BaseTimeEntity {
 
     public void addAnswer(Answer answer) {
         answer.changeQuestion(this);
-        answerGroup.add(answer);
-    }
-
-    private Answers findQuestionsDeletedFalse() {
-        return new Answers(this.answerGroup).findQuestionsDeletedFalse();
-    }
-
-    public void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
+        answers.addAnswer(answer);
     }
 }

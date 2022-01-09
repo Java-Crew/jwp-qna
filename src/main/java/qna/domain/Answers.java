@@ -3,27 +3,48 @@ package qna.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import qna.exception.ExceptionWithMessageAndCode;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Embeddable
 public class Answers {
 
-    private final List<Answer> answerGroup;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answerGroup;
 
     public Answers(List<Answer> answerGroup) {
         this.answerGroup = new ArrayList<>(answerGroup);
     }
 
-    public boolean existAnotherWriterOfAnswers(User user) {
+    public void validateDeleteAnswers(User user) {
+        if (existAnotherWriterOfAnswers(user)) {
+            throw ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException();
+        }
+    }
+
+    private boolean existAnotherWriterOfAnswers(User user) {
         return answerGroup.stream()
+            .filter(answer -> !answer.isDeleted())
             .anyMatch(answer -> !answer.isOwner(user));
     }
 
-    public List<Answer> getAnswerGroup() {
-        return new ArrayList<>(answerGroup);
+    public Answers deleteAll() {
+        for (Answer answer : answerGroup) {
+            answer.changeDeleted(true);
+        }
+        return new Answers(answerGroup);
     }
 
-    public Answers findQuestionsDeletedFalse() {
-        return new Answers(answerGroup.stream()
-            .filter(answer -> !answer.isDeleted())
-            .collect(Collectors.toList()));
+    public void addAnswer(Answer answer) {
+        answerGroup.add(answer);
+    }
+
+    public List<Answer> answerGroup() {
+        return new ArrayList<>(answerGroup);
     }
 }

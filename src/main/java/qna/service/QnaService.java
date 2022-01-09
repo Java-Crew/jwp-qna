@@ -32,12 +32,10 @@ public class QnaService {
         Question question = findQuestionById(questionId);
         question.delete(loginUser);
 
-        Answers answers = new Answers(answerRepository.findByQuestionIdAndDeletedFalse(questionId));
+        Answers answers = question.getAnswers();
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.changeDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));
-        for (Answer answer : answers.getAnswerGroup()) {
-            answer.changeDeleted(true);
+        for (Answer answer : answers.answerGroup()) {
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
         deleteHistoryService.saveAll(deleteHistories);
