@@ -1,19 +1,18 @@
 package qna.domain;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
+import qna.common.domain.BaseTimeEntity;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Answer {
+public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +28,8 @@ public class Answer {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private LocalDateTime createdAt;
-
     @Builder
-    public Answer(Long id, User writer, Question question, String contents, boolean deleted, LocalDateTime createdAt) {
+    public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
         if (Objects.isNull(writer)) {
             throw new UnAuthorizedException();
         }
@@ -46,7 +43,6 @@ public class Answer {
         this.questionId = question.getId();
         this.contents = contents;
         this.deleted = deleted;
-        this.createdAt = createdAt;
     }
 
     public boolean isOwner(User writer) {

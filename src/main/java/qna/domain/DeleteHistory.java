@@ -9,12 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import qna.common.domain.BaseTimeEntity;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class DeleteHistory {
+public class DeleteHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +27,11 @@ public class DeleteHistory {
 
     private Long deletedById;
 
-    private LocalDateTime createDate;
-
     @Builder
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedById = deletedById;
-        this.createDate = createDate;
     }
 
     @Override

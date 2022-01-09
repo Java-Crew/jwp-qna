@@ -6,12 +6,13 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import qna.common.domain.BaseTimeEntity;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Question {
+public class Question extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,19 +29,13 @@ public class Question {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     @Builder
-    public Question(Long id, String title, String contents, Long writerId, boolean deleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Question(Long id, String title, String contents, Long writerId, boolean deleted) {
         this.id = id;
         this.title = title;
         this.contents = contents;
         this.writerId = writerId;
         this.deleted = deleted;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public Question writeBy(User writer) {

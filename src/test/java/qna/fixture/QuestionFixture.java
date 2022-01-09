@@ -10,7 +10,6 @@ public class QuestionFixture {
             .title("title1")
             .contents("contents1")
             .writerId(UserFixture.JAVAJIGI.getId())
-            .createdAt(LocalDateTime.now())
             .deleted(false)
             .build();
 
@@ -18,7 +17,6 @@ public class QuestionFixture {
             .title("title2")
             .contents("contents2")
             .writerId(UserFixture.SANJIGI.getId())
-            .createdAt(LocalDateTime.now())
             .deleted(false)
             .build();
 }

@@ -6,12 +6,13 @@ import qna.UnAuthorizedException;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import qna.common.domain.BaseTimeEntity;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class User {
+public class User extends BaseTimeEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
 
@@ -31,19 +32,13 @@ public class User {
     @Column(length = 50)
     private String email;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
     @Builder
-    public User(Long id, String userId, String password, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(Long id, String userId, String password, String name, String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public void update(User loginUser, User target) {
