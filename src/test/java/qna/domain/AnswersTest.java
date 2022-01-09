@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import qna.exception.ExceptionWithMessageAndCode;
+import qna.exception.httpbasicexception.BadRequestException;
 import qna.fixture.AnswerFixture;
 import qna.fixture.UserFixture;
 
@@ -17,7 +18,7 @@ class AnswersTest {
     void existAnotherWriterOfAnswers() {
         Answers answers = new Answers(Arrays.asList(AnswerFixture.A1, AnswerFixture.A2));
         assertThatThrownBy(() -> answers.validateDeleteAnswers(UserFixture.JAVAJIGI))
-            .isInstanceOf(ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException().getClass())
+            .isInstanceOf(BadRequestException.class)
             .hasMessage(ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException().getMessage());
     }
 }

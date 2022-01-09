@@ -22,17 +22,15 @@ public class DeleteHistory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private ContentType contentType;
-
-    private Long contentId;
+    @ManyToOne
+    private Content content;
 
     @ManyToOne
     private User deletedByUser;
 
     @Builder
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
-        this.contentType = contentType;
-        this.contentId = contentId;
+    public DeleteHistory(Content content, User deletedByUser) {
+        this.content = content;
         this.deletedByUser = deletedByUser;
     }
 
@@ -42,13 +40,12 @@ public class DeleteHistory extends BaseTimeEntity {
         if (o == null || getClass() != o.getClass()) return false;
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
-                contentType == that.contentType &&
-                Objects.equals(contentId, that.contentId) &&
+                Objects.equals(content, that.content) &&
                 Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedByUser);
+        return Objects.hash(id, content, deletedByUser);
     }
 }

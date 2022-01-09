@@ -17,8 +17,6 @@ public class QnaService {
 
     private final QuestionRepository questionRepository;
 
-    private final AnswerRepository answerRepository;
-
     private final DeleteHistoryService deleteHistoryService;
 
     @Transactional(readOnly = true)
@@ -34,9 +32,9 @@ public class QnaService {
 
         Answers answers = question.getAnswers();
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));
+        deleteHistories.add(new DeleteHistory(question, question.getWriter()));
         for (Answer answer : answers.answerGroup()) {
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
+            deleteHistories.add(new DeleteHistory(answer, answer.getWriter()));
         }
         deleteHistoryService.saveAll(deleteHistories);
     }

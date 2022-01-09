@@ -15,45 +15,27 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import qna.common.domain.BaseTimeEntity;
 import qna.exception.ExceptionWithMessageAndCode;
 
 @ToString
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
-public class Question extends BaseTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Question extends Content {
 
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Lob
-    private String contents;
-
-    @ManyToOne
-    private User writer;
-
     @Embedded
     private Answers answers;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
-
     @Builder
     public Question(Long id, String title, String contents, Answers answers, User writer, boolean deleted) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
-        this.writer = writer;
-        this.deleted = deleted;
-
+        super(id, contents, writer, deleted);
         if (Objects.isNull(answers)) {
             this.answers = new Answers(Collections.emptyList());
         }
+        this.title = title;
     }
 
     public void delete(User user) {
@@ -62,12 +44,9 @@ public class Question extends BaseTimeEntity {
         }
 
         answers.validateDeleteAnswers(user);
-        deleted = true;
-        answers = answers.deleteAll();
-    }
+        answers.deleteAll();
 
-    private boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+        changeDeleted(true);
     }
 
     public void addAnswer(Answer answer) {

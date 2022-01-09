@@ -2,7 +2,6 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -33,11 +32,10 @@ public class Answers {
             .anyMatch(answer -> !answer.isOwner(user));
     }
 
-    public Answers deleteAll() {
+    public void deleteAll() {
         for (Answer answer : answerGroup) {
             answer.changeDeleted(true);
         }
-        return new Answers(answerGroup);
     }
 
     public void addAnswer(Answer answer) {

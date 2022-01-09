@@ -16,8 +16,8 @@ public enum ExceptionWithMessageAndCode {
     CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER(new BadRequestException("다른 사람이 쓴 답변이 있어 질문을 삭제할 수 없습니다.", 601)),
     NOT_FOUND_QUESTION(new NotFoundException("해당하는 질문을 찾을 수 없습니다.", 602)),
 
-    // 답변 관련: 7xx
-    NOT_EXISTS_WRITER_FOR_ANSWER(new BadRequestException("작성자가 없는 답변을 생성할 수 없습니다.", 700));
+    // 콘텐츠 관련: 7xx
+    NOT_EXISTS_WRITER_FOR_CONTENT(new BadRequestException("작성자가 없는 질문이나 답변을 생성할 수 없습니다.", 700));
 
     private final CustomException exception;
 }
