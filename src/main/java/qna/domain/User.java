@@ -1,9 +1,16 @@
 package qna.domain;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import qna.common.domain.BaseTimeEntity;
 
 @ToString
@@ -11,8 +18,6 @@ import qna.common.domain.BaseTimeEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class User extends BaseTimeEntity {
-
-    public static final GuestUser GUEST_USER = new GuestUser();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +44,6 @@ public class User extends BaseTimeEntity {
         this.email = email;
     }
 
-    public boolean isGuestUser() {
-        return false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -58,12 +59,5 @@ public class User extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    private static class GuestUser extends User {
-        @Override
-        public boolean isGuestUser() {
-            return true;
-        }
     }
 }

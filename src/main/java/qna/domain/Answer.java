@@ -1,10 +1,13 @@
 package qna.domain;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.util.Objects;
-import qna.common.domain.BaseTimeEntity;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import qna.exception.ExceptionWithMessageAndCode;
 
 @ToString

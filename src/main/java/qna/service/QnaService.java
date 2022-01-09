@@ -3,13 +3,10 @@ package qna.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.domain.*;
+import qna.domain.Question;
+import qna.domain.User;
 import qna.exception.ExceptionWithMessageAndCode;
-import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -20,7 +17,7 @@ public class QnaService {
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(ExceptionWithMessageAndCode.NOT_FOUND_QUESTION::getException);
+            .orElseThrow(ExceptionWithMessageAndCode.NOT_FOUND_QUESTION::getException);
     }
 
     @Transactional
