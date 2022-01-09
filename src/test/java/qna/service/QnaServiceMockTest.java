@@ -49,7 +49,7 @@ class QnaServiceMockTest {
                 .id(1L)
                 .title("title1")
                 .contents("contents1")
-                .writerId(UserFixture.JAVAJIGI.getId())
+                .writer(UserFixture.JAVAJIGI)
                 .build();
 
         answer = Answer.builder()
@@ -113,8 +113,8 @@ class QnaServiceMockTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriterId()),
-                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId())
+                new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter()),
+                new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }

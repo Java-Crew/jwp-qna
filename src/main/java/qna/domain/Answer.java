@@ -18,9 +18,11 @@ public class Answer extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long writerId;
+    @ManyToOne
+    private User writer;
 
-    private Long questionId;
+    @ManyToOne
+    private Question question;
 
     @Lob
     private String contents;
@@ -39,18 +41,18 @@ public class Answer extends BaseTimeEntity {
         }
 
         this.id = id;
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
+        this.writer = writer;
+        this.question = question;
         this.contents = contents;
         this.deleted = deleted;
     }
 
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
+    public void changeQuestion(Question question) {
+        this.question = question;
     }
 
     public void changeDeleted(boolean deleted) {

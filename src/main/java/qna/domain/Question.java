@@ -1,11 +1,8 @@
 package qna.domain;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Objects;
 import qna.common.domain.BaseTimeEntity;
 
 @ToString
@@ -24,31 +21,27 @@ public class Question extends BaseTimeEntity {
     @Lob
     private String contents;
 
-    private Long writerId;
+    @ManyToOne
+    private User writer;
 
     @Column(nullable = false)
     private boolean deleted = false;
 
     @Builder
-    public Question(Long id, String title, String contents, Long writerId, boolean deleted) {
+    public Question(Long id, String title, String contents, User writer, boolean deleted) {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.writerId = writerId;
+        this.writer = writer;
         this.deleted = deleted;
     }
 
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
-
     public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
+        return this.writer.equals(writer);
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.changeQuestion(this);
     }
 
     public void changeDeleted(boolean deleted) {

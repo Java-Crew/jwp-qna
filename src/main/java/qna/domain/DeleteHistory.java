@@ -1,5 +1,6 @@
 package qna.domain;
 
+import javax.persistence.ManyToOne;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -25,13 +26,14 @@ public class DeleteHistory extends BaseTimeEntity {
 
     private Long contentId;
 
-    private Long deletedById;
+    @ManyToOne
+    private User deletedByUser;
 
     @Builder
-    public DeleteHistory(ContentType contentType, Long contentId, Long deletedById) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser) {
         this.contentType = contentType;
         this.contentId = contentId;
-        this.deletedById = deletedById;
+        this.deletedByUser = deletedByUser;
     }
 
     @Override
@@ -42,11 +44,11 @@ public class DeleteHistory extends BaseTimeEntity {
         return Objects.equals(id, that.id) &&
                 contentType == that.contentType &&
                 Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deletedById, that.deletedById);
+                Objects.equals(deletedByUser, that.deletedByUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deletedById);
+        return Objects.hash(id, contentType, contentId, deletedByUser);
     }
 }
