@@ -1,12 +1,11 @@
 package qna.domain;
 
 import lombok.*;
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
 
 import javax.persistence.*;
 import java.util.Objects;
 import qna.common.domain.BaseTimeEntity;
+import qna.exception.ExceptionWithMessageAndCode;
 
 @ToString
 @Getter
@@ -33,11 +32,11 @@ public class Answer extends BaseTimeEntity {
     @Builder
     public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
         if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
+            throw ExceptionWithMessageAndCode.NOT_EXISTS_WRITER_FOR_ANSWER.getException();
         }
 
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw ExceptionWithMessageAndCode.NOT_FOUND_QUESTION.getException();
         }
 
         this.id = id;
