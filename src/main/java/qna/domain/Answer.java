@@ -2,6 +2,8 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,6 +19,7 @@ import qna.exception.ExceptionWithMessageAndCode;
 public class Answer extends Content {
 
     @ManyToOne
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "answer_question"))
     private Question question;
 
     @Builder

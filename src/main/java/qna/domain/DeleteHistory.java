@@ -2,9 +2,11 @@ package qna.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,6 +25,7 @@ public class DeleteHistory extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "content_id", foreignKey = @ForeignKey(name = "deleteHistory_content"))
     private Content content;
 
     public DeleteHistory(Content content) {

@@ -5,11 +5,13 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
@@ -34,6 +36,7 @@ public abstract class Content extends BaseTimeEntity {
     private String contents;
 
     @ManyToOne
+    @JoinColumn(name = "writer_id", foreignKey = @ForeignKey(name = "content_fk_writer"))
     private User writer;
 
     @Column(nullable = false)
