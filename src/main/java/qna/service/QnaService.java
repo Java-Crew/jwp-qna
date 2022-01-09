@@ -9,7 +9,6 @@ import qna.domain.*;
 import qna.repository.AnswerRepository;
 import qna.repository.QuestionRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,17 +35,15 @@ public class QnaService {
             throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
         }
 
-        List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
-        for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+        Answers answers = new Answers(answerRepository.findByQuestionIdAndDeletedFalse(questionId));
+        if (answers.existAnotherWriterOfAnswers(loginUser)) {
+            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
         }
 
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.changeDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));
-        for (Answer answer : answers) {
+        for (Answer answer : answers.getAnswerGroup()) {
             answer.changeDeleted(true);
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter()));
         }
