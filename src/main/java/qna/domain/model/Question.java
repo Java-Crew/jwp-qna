@@ -44,10 +44,14 @@ public class Question {
     }
 
     public boolean isOwner(User writer) {
-        return this.writer.getId().equals(writer.getId());
+        return this.writer.matchUserId(writer.getUserId());
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
+    }
+
+    public void changeDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

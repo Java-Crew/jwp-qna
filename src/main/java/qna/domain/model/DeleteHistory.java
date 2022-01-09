@@ -33,7 +33,7 @@ public class DeleteHistory {
 
     private Long contentId;
 
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
 
     @Builder
     public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
@@ -41,6 +41,15 @@ public class DeleteHistory {
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
         this.createDate = createDate;
+    }
+
+    public static DeleteHistory create(ContentType contentType, Long contentId, User deletedByUser) {
+        return DeleteHistory.builder()
+            .contentType(contentType)
+            .contentId(contentId)
+            .deletedByUser(deletedByUser)
+            .createDate(LocalDateTime.now())
+            .build();
     }
 
     @Override
