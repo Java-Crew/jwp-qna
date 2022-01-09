@@ -30,15 +30,9 @@ public class QnaService {
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) {
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException();
-        }
+        question.delete(loginUser);
 
         Answers answers = new Answers(answerRepository.findByQuestionIdAndDeletedFalse(questionId));
-        if (answers.existAnotherWriterOfAnswers(loginUser)) {
-            throw ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException();
-        }
-
         List<DeleteHistory> deleteHistories = new ArrayList<>();
         question.changeDeleted(true);
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriter()));

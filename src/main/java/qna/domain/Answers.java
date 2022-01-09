@@ -2,6 +2,7 @@ package qna.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Answers {
 
@@ -18,5 +19,11 @@ public class Answers {
 
     public List<Answer> getAnswerGroup() {
         return new ArrayList<>(answerGroup);
+    }
+
+    public Answers findQuestionsDeletedFalse() {
+        return new Answers(answerGroup.stream()
+            .filter(answer -> !answer.isDeleted())
+            .collect(Collectors.toList()));
     }
 }
