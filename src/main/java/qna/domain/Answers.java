@@ -8,6 +8,8 @@ import javax.persistence.OneToMany;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import qna.exception.ExceptionWithMessageAndCode;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

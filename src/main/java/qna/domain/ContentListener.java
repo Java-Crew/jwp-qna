@@ -1,15 +1,13 @@
 package qna.domain;
 
-import javax.persistence.PreUpdate;
-
+import java.util.Locale;
+import javax.persistence.PreRemove;
 import qna.common.util.BeanUtil;
 import qna.repository.DeleteHistoryRepository;
 
-import java.util.Locale;
-
 public class ContentListener {
 
-    @PreUpdate
+    @PreRemove
     public void preUpdate(Object o) {
         DeleteHistoryRepository deleteHistoryRepository = BeanUtil.getBean(DeleteHistoryRepository.class);
         Content content = (Content) o;

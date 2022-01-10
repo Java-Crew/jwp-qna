@@ -8,10 +8,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import qna.exception.ExceptionWithMessageAndCode;
 
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@OnDelete(action = OnDeleteAction.CASCADE)
 @PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "question_fk_id"))
 @Entity
 public class Question extends Content {

@@ -18,12 +18,18 @@ import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.common.domain.BaseTimeEntity;
 import qna.exception.ExceptionWithMessageAndCode;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(value = ContentListener.class)
+@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE content SET deleted = true where id = ?")
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "ContentType")
