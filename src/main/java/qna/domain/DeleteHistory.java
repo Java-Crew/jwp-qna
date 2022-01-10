@@ -1,13 +1,8 @@
 package qna.domain;
 
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,12 +19,17 @@ public class DeleteHistory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "content_id", foreignKey = @ForeignKey(name = "deleteHistory_content"))
-    private Content content;
+    @Enumerated(EnumType.STRING)
+    private ContentType contentType;
 
-    public DeleteHistory(Content content) {
-        this.content = content;
+    private Long contentId;
+
+    private Long deleteById;
+
+    public DeleteHistory(ContentType contentType, Long contentId, Long deleteById) {
+        this.contentType = contentType;
+        this.contentId = contentId;
+        this.deleteById = deleteById;
     }
 
     @Override
@@ -42,11 +42,13 @@ public class DeleteHistory extends BaseTimeEntity {
         }
         DeleteHistory that = (DeleteHistory) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(content, that.content);
+                Objects.equals(contentType, that.contentType) &&
+                Objects.equals(contentId, that.contentId) &&
+                Objects.equals(deleteById, that.deleteById);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content);
+        return Objects.hash(id, contentType, contentId, deleteById);
     }
 }
