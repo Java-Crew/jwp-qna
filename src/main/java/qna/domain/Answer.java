@@ -32,11 +32,18 @@ public class Answer extends Content {
         if (Objects.isNull(question)) {
             throw ExceptionWithMessageAndCode.NOT_FOUND_QUESTION.getException();
         }
-
         this.question = question;
     }
 
     public void changeQuestion(Question question) {
         this.question = question;
+    }
+
+    @Override
+    public void delete(User user) {
+        if (!isOwner(user) || user.isGuestUser()) {
+            throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException();
+        }
+        this.changeDeleted(true);
     }
 }

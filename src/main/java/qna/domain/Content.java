@@ -61,6 +61,8 @@ public abstract class Content extends BaseTimeEntity {
         this.deleted = deleted;
     }
 
+    public abstract void delete(User user);
+
     protected boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }

@@ -34,14 +34,13 @@ public class Question extends Content {
         this.title = title;
     }
 
+    @Override
     public void delete(User user) {
-        if (!isOwner(user)) {
+        if (!isOwner(user) || user.isGuestUser()) {
             throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException();
         }
 
-        answers.validateDeleteAnswers(user);
-        answers.deleteAll();
-
+        answers.deleteAll(user);
         changeDeleted(true);
     }
 

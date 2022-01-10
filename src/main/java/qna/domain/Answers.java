@@ -23,9 +23,12 @@ public class Answers {
         this.answerGroup = new ArrayList<>(answerGroup);
     }
 
-    public void validateDeleteAnswers(User user) {
+    public void deleteAll(User user) {
         if (existAnotherWriterOfAnswers(user)) {
             throw ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException();
+        }
+        for (Answer answer : answerGroup) {
+            answer.delete(user);
         }
     }
 
@@ -33,12 +36,6 @@ public class Answers {
         return answerGroup.stream()
                 .filter(answer -> !answer.isDeleted())
                 .anyMatch(answer -> !answer.isOwner(user));
-    }
-
-    public void deleteAll() {
-        for (Answer answer : answerGroup) {
-            answer.changeDeleted(true);
-        }
     }
 
     public void addAnswer(Answer answer) {
