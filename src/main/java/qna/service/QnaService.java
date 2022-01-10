@@ -29,29 +29,16 @@ public class QnaService {
 
     @Transactional
     public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+        DeleteHistories deleteHistories = DeleteHistories.empty();
+
         Question question = findQuestionById(questionId);
-        validateQuestionOwner(question, loginUser);
+        question.delete(loginUser, deleteHistories);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         for (Answer answer : answers) {
-            validateAnswerOwner(answer, loginUser);
+            answer.delete(loginUser, deleteHistories);
         }
 
-        DeleteHistories deleteHistories = DeleteHistories.empty();
-        deleteHistories.addQuestionDeleteHistory(question, loginUser);
-        deleteHistories.addAnswerDeleteHistories(answers, loginUser);
         deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
-    }
-
-    private void validateQuestionOwner(Question question, User loginUser) throws CannotDeleteException {
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
-    }
-
-    private void validateAnswerOwner(Answer answer, User loginUser) throws CannotDeleteException {
-        if (!answer.isOwner(loginUser)) {
-            throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-        }
     }
 }

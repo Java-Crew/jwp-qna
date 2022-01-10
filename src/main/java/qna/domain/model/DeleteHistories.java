@@ -19,19 +19,15 @@ public class DeleteHistories {
         return Collections.unmodifiableList(deleteHistories);
     }
 
-    public void addQuestionDeleteHistory(Question question, User loginUser) {
-        question.changeDeleted(true);
+    public void addQuestionDeleteHistory(User loginUser, Question question) {
         deleteHistories.add(
             DeleteHistory.create(ContentType.QUESTION, question.getId(), loginUser)
         );
     }
 
-    public void addAnswerDeleteHistories(List<Answer> answers, User loginUser) {
-        for (Answer answer : answers) {
-            answer.changeDeleted(true);
-            deleteHistories.add(
-                DeleteHistory.create(ContentType.ANSWER, answer.getId(), loginUser)
-            );
-        }
+    public void addAnswerDeleteHistories(User loginUser, Answer answer) {
+        deleteHistories.add(
+            DeleteHistory.create(ContentType.ANSWER, answer.getId(), loginUser)
+        );
     }
 }

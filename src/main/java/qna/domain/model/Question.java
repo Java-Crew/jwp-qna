@@ -1,16 +1,15 @@
 package qna.domain.model;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import qna.CannotDeleteException;
 
 @Getter
 @Entity
@@ -21,37 +20,28 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
-    private User writer;
-
     private String title;
 
-    private String contents;
-
-    private boolean deleted = false;
+    @Embedded
+    private Contents contents;
 
     @Builder
-    public Question(Long id, String title, String contents) {
+    public Question(Long id, String title, User writer, String contents) {
         this.id = id;
         this.title = title;
-        this.contents = contents;
-    }
-
-    public Question writeBy(User writer) {
-        this.writer = writer;
-        return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writer.matchUserId(writer.getUserId());
+        this.contents = Contents.builder()
+            .writer(writer)
+            .contents(contents)
+            .build();
     }
 
     public void addAnswer(Answer answer) {
         answer.toQuestion(this);
     }
 
-    public void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void delete(User loginUser, DeleteHistories deleteHistories) throws CannotDeleteException {
+        contents.validateOwner(loginUser, "질문을 삭제할 권한이 없습니다.");
+        contents.changeDeleted(true);
+        deleteHistories.addQuestionDeleteHistory(loginUser, this);
     }
 }
