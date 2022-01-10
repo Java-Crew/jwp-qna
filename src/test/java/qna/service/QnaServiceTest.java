@@ -17,14 +17,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.CannotDeleteException;
-import qna.fixture.QuestionFixture;
-import qna.fixture.UserFixture;
 import qna.domain.model.Answer;
 import qna.domain.model.ContentType;
 import qna.domain.model.DeleteHistory;
 import qna.domain.model.Question;
 import qna.domain.repository.AnswerRepository;
 import qna.domain.repository.QuestionRepository;
+import qna.fixture.QuestionFixture;
+import qna.fixture.UserFixture;
 
 @DisplayName("Qna 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +47,7 @@ class QnaServiceTest {
 
     @BeforeEach
     public void setUp() {
-        question = new Question(1L, "title1", "contents1").writeBy(UserFixture.JAVAJIGI);
+        question = new Question(1L, "title1", UserFixture.JAVAJIGI, "contents1");
         answer = new Answer(1L, UserFixture.JAVAJIGI, question, "Answers Contents1");
         question.addAnswer(answer);
     }
@@ -57,10 +57,10 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
-        assertThat(question.isDeleted()).isFalse();
+        assertThat(question.getContents().isDeleted()).isFalse();
         qnaService.deleteQuestion(UserFixture.JAVAJIGI, question.getId());
 
-        assertThat(question.isDeleted()).isTrue();
+        assertThat(question.getContents().isDeleted()).isTrue();
         verifyDeleteHistories();
     }
 
@@ -79,8 +79,8 @@ class QnaServiceTest {
 
         qnaService.deleteQuestion(UserFixture.JAVAJIGI, question.getId());
 
-        assertThat(question.isDeleted()).isTrue();
-        assertThat(answer.isDeleted()).isTrue();
+        assertThat(question.getContents().isDeleted()).isTrue();
+        assertThat(answer.getContents().isDeleted()).isTrue();
         verifyDeleteHistories();
     }
 
@@ -99,8 +99,10 @@ class QnaServiceTest {
 
     private void verifyDeleteHistories() {
         List<DeleteHistory> deleteHistories = Arrays.asList(
-            new DeleteHistory(ContentType.QUESTION, question.getId(), question.getWriter(), LocalDateTime.now()),
-            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now())
+            new DeleteHistory(
+                ContentType.QUESTION, question.getId(), question.getContents().getWriter(), LocalDateTime.now()
+            ),
+            new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getContents().getWriter(), LocalDateTime.now())
         );
         verify(deleteHistoryService).saveAll(deleteHistories);
     }
