@@ -8,7 +8,7 @@ import qna.repository.DeleteHistoryRepository;
 public class ContentListener {
 
     @PreRemove
-    public void preUpdate(Object o) {
+    public void preDelete(Object o) {
         DeleteHistoryRepository deleteHistoryRepository = BeanUtil.getBean(DeleteHistoryRepository.class);
         Content content = (Content) o;
 

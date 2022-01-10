@@ -48,4 +48,8 @@ public class Question extends Content {
         answer.changeQuestion(this);
         answers.addAnswer(answer);
     }
+
+    public Answers getAnswers() {
+        return answers;
+    }
 }
