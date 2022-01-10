@@ -25,7 +25,7 @@ public class Answers {
 
     public Answers deleteAll(User user) {
         if (existAnotherWriterOfAnswers(user)) {
-            throw ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException();
+            throw ExceptionWithMessageAndCode.CANNOT_DELETE_ANSWERS_WITH_ANOTHER_WRITER.getException();
         }
         for (Answer answer : answerGroup) {
             answer.delete(user);
