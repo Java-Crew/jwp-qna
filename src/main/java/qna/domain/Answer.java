@@ -22,7 +22,7 @@ import qna.exception.ExceptionWithMessageAndCode;
 @Entity
 public class Answer extends Content {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "answer_fk_question"))
     private Question question;
 
