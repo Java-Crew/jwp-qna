@@ -23,13 +23,14 @@ public class Answers {
         this.answerGroup = new ArrayList<>(answerGroup);
     }
 
-    public void deleteAll(User user) {
+    public Answers deleteAll(User user) {
         if (existAnotherWriterOfAnswers(user)) {
             throw ExceptionWithMessageAndCode.CANNOT_DELETE_QUESTION_WITH_ANOTHER_WRITER.getException();
         }
         for (Answer answer : answerGroup) {
             answer.delete(user);
         }
+        return this;
     }
 
     private boolean existAnotherWriterOfAnswers(User user) {
@@ -40,5 +41,9 @@ public class Answers {
 
     public void addAnswer(Answer answer) {
         answerGroup.add(answer);
+    }
+
+    public List<Answer> getAnswerGroup() {
+        return new ArrayList<>(answerGroup);
     }
 }
