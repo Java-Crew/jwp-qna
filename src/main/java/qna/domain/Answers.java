@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import qna.exception.ExceptionWithMessageAndCode;
@@ -28,8 +29,8 @@ public class Answers {
 
     private boolean existAnotherWriterOfAnswers(User user) {
         return answerGroup.stream()
-            .filter(answer -> !answer.isDeleted())
-            .anyMatch(answer -> !answer.isOwner(user));
+                .filter(answer -> !answer.isDeleted())
+                .anyMatch(answer -> !answer.isOwner(user));
     }
 
     public void deleteAll() {

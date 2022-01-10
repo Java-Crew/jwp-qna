@@ -2,9 +2,8 @@ package qna.domain;
 
 import java.util.Collections;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -13,6 +12,7 @@ import qna.exception.ExceptionWithMessageAndCode;
 
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "question_fk_id"))
 @Entity
 public class Question extends Content {
 

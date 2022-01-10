@@ -1,10 +1,8 @@
 package qna.domain;
 
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,11 +13,12 @@ import qna.exception.ExceptionWithMessageAndCode;
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "answer_fk_id"))
 @Entity
 public class Answer extends Content {
 
     @ManyToOne
-    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "answer_question"))
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "answer_fk_question"))
     private Question question;
 
     @Builder
