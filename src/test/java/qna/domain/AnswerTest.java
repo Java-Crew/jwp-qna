@@ -73,7 +73,7 @@ public class AnswerTest {
     @Test
     @DisplayName("답변 삭제 테스트 실패 - 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다")
     void delete_fail() {
-        assertThatThrownBy(() -> answer.delete(user2, any()))
+        assertThatThrownBy(() -> answer.delete(user2, DeleteHistories.empty()))
             .isInstanceOf(CannotDeleteException.class)
             .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
     }
