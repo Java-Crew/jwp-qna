@@ -3,16 +3,22 @@ package qna.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import qna.exception.ExceptionWithMessageAndCode;
+import qna.fixture.AnswerFixture;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -53,15 +59,17 @@ class QuestionTest {
     @Test
     @DisplayName("질문을 제거하면, 질문과 답변이 모두 삭제 상태가 된다.")
     void delete() {
+        final Answers[] expected = new Answers[1];
         Answer answer = Answer.builder()
-            .deleted(true)
-            .question(question)
-            .writer(UserFixture.JAVAJIGI)
-            .build();
-        when(answers.deleteAll(any(User.class))).thenReturn(new Answers(Collections.singletonList(answer)));
+                .deleted(true)
+                .question(question)
+                .writer(UserFixture.JAVAJIGI)
+                .build();
+        doAnswer((invocation) -> expected[0] = new Answers(Collections.singletonList(answer)))
+                .when(answers).deleteAll(any(User.class));
 
         question.delete(UserFixture.JAVAJIGI);
-        assertThat(answers.getAnswerGroup()).allMatch(Content::isDeleted);
+        assertThat(expected[0].getAnswerGroup()).allMatch(Content::isDeleted);
         assertThat(question.isDeleted()).isTrue();
     }
 }
