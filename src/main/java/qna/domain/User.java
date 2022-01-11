@@ -1,23 +1,21 @@
 package qna.domain;
 
-import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import qna.common.domain.BaseTimeEntity;
+
+import javax.persistence.*;
+import java.util.Objects;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                name = "user_uk_user_id",
+                columnNames = {"userId"}
+        )
+})
 public class User extends BaseTimeEntity {
 
     public static final GuestUser GUEST_USER = new GuestUser();
@@ -26,7 +24,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false)
     private String userId;
 
     @Column(length = 20, nullable = false)
