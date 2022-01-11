@@ -1,20 +1,11 @@
 package qna;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.parallel.Isolated;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-@Isolated
-@SpringBootTest
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = BEFORE_CLASS)
 public class SpringContainerTest {
-
-    @Autowired
-    protected DatabaseCleaner databaseCleaner;
-
-    @AfterEach
-    void tearDown() {
-        databaseCleaner.tableClear();
-    }
-
 }
