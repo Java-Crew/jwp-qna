@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import qna.domain.User;
-import qna.fixture.UserFixture;
+import qna.fixture.TestUser;
 import qna.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ class BaseTimeEntityTest {
     @DisplayName("자동으로 생성 날짜와 수정 날짜 컬럼을 생성하는지 확인한다.")
     void create() {
         LocalDateTime now = LocalDateTime.now();
-        userRepository.save(UserFixture.JAVAJIGI);
+        userRepository.save(TestUser.create());
 
         List<User> users = userRepository.findAll();
         User user = users.get(0);

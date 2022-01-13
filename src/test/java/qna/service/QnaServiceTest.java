@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import qna.SpringContainerTest;
 import qna.domain.*;
 import qna.exception.ExceptionWithMessageAndCode;
-import qna.fixture.UserFixture;
+import qna.fixture.TestAnswer;
+import qna.fixture.TestQuestion;
+import qna.fixture.TestUser;
 import qna.repository.ContentRepository;
 import qna.repository.UserRepository;
 
@@ -28,37 +30,21 @@ class QnaServiceTest extends SpringContainerTest {
 
     private Question question;
 
+    private User user;
+
     private Answers answers;
 
     @BeforeEach
     void setUp() {
-        userRepository.save(UserFixture.JAVAJIGI);
+        user = userRepository.save(TestUser.create());
+        question = TestQuestion.create(user, null, false);
 
-        question = Question.builder()
-                .title("title1")
-                .contents("contents1")
-                .writer(UserFixture.JAVAJIGI)
-                .build();
+        question.addAnswer(TestAnswer.create(user, question, false));
+        question.addAnswer(TestAnswer.create(user, question, false));
+        question.addAnswer(TestAnswer.create(user, question, false));
 
-        question.addAnswer(Answer.builder()
-                .writer(UserFixture.JAVAJIGI)
-                .question(question)
-                .contents("Answers Contents1")
-                .build());
-        question.addAnswer(Answer.builder()
-                .writer(UserFixture.JAVAJIGI)
-                .question(question)
-                .contents("Answers Contents2")
-                .build());
-        question.addAnswer(Answer.builder()
-                .writer(UserFixture.JAVAJIGI)
-                .question(question)
-                .contents("Answers Contents3")
-                .deleted(true)
-                .build());
-
-        answers = question.getAnswers();
-        contentRepository.save(question);
+        Question savedQuestion = contentRepository.save(question);
+        answers = savedQuestion.getAnswers();
     }
 
     @Test
@@ -70,7 +56,7 @@ class QnaServiceTest extends SpringContainerTest {
     @Test
     @DisplayName("자신의 질문이 아닌 질문을 제거할 수 없다.")
     void delete_another_writer() {
-        assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.SANJIGI, question.getId()))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(TestUser.createWithId(), question.getId()))
                 .isInstanceOf(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException().getClass())
                 .hasMessage(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException().getMessage());
     }
@@ -86,7 +72,7 @@ class QnaServiceTest extends SpringContainerTest {
     @Test
     @DisplayName("질문을 제거하면, 질문과 답변이 모두 삭제 상태가 된다.")
     void delete() {
-        qnaService.deleteQuestion(UserFixture.JAVAJIGI, question.getId());
+        qnaService.deleteQuestion(user, question.getId());
         assertThat(contentRepository.existsById(question.getId())).isFalse();
         assertThat(answers.getAnswerGroup()).noneMatch(answer -> contentRepository.existsById(answer.getId()));
     }

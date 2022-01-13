@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.fixture.UserFixture;
+import qna.fixture.TestUser;
 
 @DisplayName("User 테스트")
 class UserTest {
@@ -14,7 +14,7 @@ class UserTest {
     void isGuestUser() {
         User guestUser = User.GUEST_USER;
         assertThat(guestUser.isGuestUser()).isTrue();
-        assertThat(UserFixture.JAVAJIGI.isGuestUser()).isFalse();
+        assertThat(TestUser.createWithId().isGuestUser()).isFalse();
     }
 
 }

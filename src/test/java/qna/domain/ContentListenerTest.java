@@ -1,7 +1,6 @@
 package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import qna.SpringContainerTest;
-import qna.fixture.UserFixture;
+import qna.fixture.TestAnswer;
+import qna.fixture.TestQuestion;
+import qna.fixture.TestUser;
 import qna.repository.ContentRepository;
 import qna.repository.DeleteHistoryRepository;
 import qna.repository.UserRepository;
@@ -30,30 +31,12 @@ class ContentListenerTest extends SpringContainerTest {
 
     @BeforeEach
     void setUp() {
-        userRepository.save(UserFixture.JAVAJIGI);
+        User savedUser = userRepository.save(TestUser.create());
+        question = TestQuestion.create(savedUser, null, false);
 
-        question = Question.builder()
-            .title("title1")
-            .contents("contents1")
-            .writer(UserFixture.JAVAJIGI)
-            .build();
-
-        question.addAnswer(Answer.builder()
-            .writer(UserFixture.JAVAJIGI)
-            .question(question)
-            .contents("Answers Contents1")
-            .build());
-        question.addAnswer(Answer.builder()
-            .writer(UserFixture.JAVAJIGI)
-            .question(question)
-            .contents("Answers Contents2")
-            .build());
-        question.addAnswer(Answer.builder()
-            .writer(UserFixture.JAVAJIGI)
-            .question(question)
-            .contents("Answers Contents3")
-            .deleted(true)
-            .build());
+        question.addAnswer(TestAnswer.create(savedUser, question, false));
+        question.addAnswer(TestAnswer.create(savedUser, question, false));
+        question.addAnswer(TestAnswer.create(savedUser, question, false));
 
         contentRepository.save(question);
     }
