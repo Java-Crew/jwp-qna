@@ -51,4 +51,5 @@ class ContentListenerTest extends SpringContainerTest {
         assertThat(deleteHistories.stream().filter(deleteHistory -> deleteHistory.getContentType() == ContentType.ANSWER))
             .hasSize(question.getAnswers().getAnswerGroup().size());
     }
+
 }

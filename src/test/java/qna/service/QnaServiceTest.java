@@ -1,5 +1,6 @@
 package qna.service;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import qna.fixture.TestAnswer;
 import qna.fixture.TestQuestion;
 import qna.fixture.TestUser;
 import qna.repository.ContentRepository;
+import qna.repository.DeleteHistoryRepository;
 import qna.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +26,9 @@ class QnaServiceTest extends SpringContainerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     @Autowired
     private QnaService qnaService;
@@ -75,6 +80,15 @@ class QnaServiceTest extends SpringContainerTest {
         qnaService.deleteQuestion(user, question.getId());
         assertThat(contentRepository.existsById(question.getId())).isFalse();
         assertThat(answers.getAnswerGroup()).noneMatch(answer -> contentRepository.existsById(answer.getId()));
+        verifyDeleteHistories();
+    }
+
+    private void verifyDeleteHistories() {
+        List<DeleteHistory> deleteHistories = deleteHistoryRepository.findAll();
+        assertThat(deleteHistories.stream().filter(deleteHistory -> deleteHistory.getContentType() == ContentType.QUESTION))
+            .hasSize(1);
+        assertThat(deleteHistories.stream().filter(deleteHistory -> deleteHistory.getContentType() == ContentType.ANSWER))
+            .hasSize(question.getAnswers().getAnswerGroup().size());
     }
 
 }
