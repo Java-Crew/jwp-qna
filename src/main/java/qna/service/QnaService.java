@@ -21,8 +21,9 @@ public class QnaService {
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) {
+    public void deleteQuestion(User user, Long questionId) {
         Content question = findQuestionById(questionId);
-        question.delete(loginUser);
+        question.validateDelete(user);
+        contentRepository.deleteById(questionId);
     }
 }

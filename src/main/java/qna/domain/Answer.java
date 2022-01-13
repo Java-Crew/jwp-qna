@@ -40,10 +40,9 @@ public class Answer extends Content {
     }
 
     @Override
-    public void delete(User user) {
+    public void validateDelete(User user) {
         if (!isOwner(user) || user.isGuestUser()) {
             throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException();
         }
-        this.changeDeleted(true);
     }
 }

@@ -70,7 +70,7 @@ class QnaServiceTest extends SpringContainerTest {
     @Test
     @DisplayName("자신의 질문이 아닌 질문을 제거할 수 없다.")
     void delete_another_writer() {
-        assertThatThrownBy(() -> question.delete(UserFixture.SANJIGI))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.SANJIGI, question.getId()))
                 .isInstanceOf(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException().getClass())
                 .hasMessage(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException().getMessage());
     }
@@ -78,7 +78,7 @@ class QnaServiceTest extends SpringContainerTest {
     @Test
     @DisplayName("비로그인 유저는 질문을 삭제할 수 없다.")
     void delete_guest_user() {
-        assertThatThrownBy(() -> question.delete(User.GUEST_USER))
+        assertThatThrownBy(() -> qnaService.deleteQuestion(User.GUEST_USER, question.getId()))
                 .isInstanceOf(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException().getClass())
                 .hasMessage(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException().getMessage());
     }

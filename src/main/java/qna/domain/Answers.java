@@ -23,12 +23,9 @@ public class Answers {
         this.answerGroup = new ArrayList<>(answerGroup);
     }
 
-    public void deleteAll(User user) {
+    public void validateDelete(User user) {
         if (existAnotherWriterOfAnswers(user)) {
             throw ExceptionWithMessageAndCode.CANNOT_DELETE_ANSWERS_WITH_ANOTHER_WRITER.getException();
-        }
-        for (Answer answer : answerGroup) {
-            answer.delete(user);
         }
     }
 

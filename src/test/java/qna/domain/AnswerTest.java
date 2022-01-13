@@ -25,7 +25,7 @@ class AnswerTest {
     @Test
     @DisplayName("자신의 질문이 아닌 질문을 제거할 수 없다.")
     void delete_another_writer() {
-        assertThatThrownBy(() -> answer.delete(UserFixture.SANJIGI))
+        assertThatThrownBy(() -> answer.validateDelete(UserFixture.SANJIGI))
             .isInstanceOf(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException().getClass())
             .hasMessage(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException().getMessage());
     }
@@ -33,16 +33,9 @@ class AnswerTest {
     @Test
     @DisplayName("비로그인 유저는 질문을 삭제할 수 없다.")
     void delete_guest_user() {
-        assertThatThrownBy(() -> answer.delete(User.GUEST_USER))
+        assertThatThrownBy(() -> answer.validateDelete(User.GUEST_USER))
             .isInstanceOf(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException().getClass())
             .hasMessage(ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException().getMessage());
-    }
-
-    @Test
-    @DisplayName("답변을 삭제하면, 답변이 삭제 상태가 된다.")
-    void delete() {
-        answer.delete(UserFixture.JAVAJIGI);
-        assertThat(answer.isDeleted()).isTrue();
     }
 
 }

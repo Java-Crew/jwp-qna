@@ -35,13 +35,11 @@ public class Question extends Content {
     }
 
     @Override
-    public void delete(User user) {
+    public void validateDelete(User user) {
         if (!isOwner(user) || user.isGuestUser()) {
             throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException();
         }
-
-        answers.deleteAll(user);
-        changeDeleted(true);
+        answers.validateDelete(user);
     }
 
     public void addAnswer(Answer answer) {

@@ -5,7 +5,6 @@ import qna.domain.User;
 public class UserFixture {
 
     public static final User JAVAJIGI = User.builder()
-        .id(1L)
         .userId("javajigi")
         .password("password")
         .name("name")
@@ -13,7 +12,6 @@ public class UserFixture {
         .build();
 
     public static final User SANJIGI = User.builder()
-        .id(2L)
         .userId("sanjigi")
         .password("password")
         .name("name")
