@@ -1,83 +1,53 @@
 package qna.domain;
 
-public class Question {
-    private Long id;
+import java.util.Collections;
+import java.util.Objects;
+import javax.persistence.*;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import qna.exception.ExceptionWithMessageAndCode;
+
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@OnDelete(action = OnDeleteAction.CASCADE)
+@PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "question_fk_id"))
+@Entity
+public class Question extends Content {
+
+    @Column(length = 100, nullable = false)
     private String title;
-    private String contents;
-    private Long writerId;
-    private boolean deleted = false;
 
-    public Question(String title, String contents) {
-        this(null, title, contents);
-    }
+    @Embedded
+    private Answers answers;
 
-    public Question(Long id, String title, String contents) {
-        this.id = id;
+    @Builder
+    public Question(Long id, String title, String contents, Answers answers, User writer, boolean deleted) {
+        super(id, contents, writer, deleted);
+        if (Objects.isNull(answers)) {
+            this.answers = new Answers(Collections.emptyList());
+        }
         this.title = title;
-        this.contents = contents;
-    }
-
-    public Question writeBy(User writer) {
-        this.writerId = writer.getId();
-        return this;
-    }
-
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", contents='" + contents + '\'' +
-                ", writerId=" + writerId +
-                ", deleted=" + deleted +
-                '}';
+    public void validateDelete(User user) {
+        if (!isOwner(user) || user.isGuestUser()) {
+            throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_QUESTION.getException();
+        }
+        answers.validateDelete(user);
+    }
+
+    public void addAnswer(Answer answer) {
+        answer.changeQuestion(this);
+        answers.addAnswer(answer);
+    }
+
+    public Answers getAnswers() {
+        return answers;
     }
 }

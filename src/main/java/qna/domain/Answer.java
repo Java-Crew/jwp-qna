@@ -1,93 +1,48 @@
 package qna.domain;
 
-import qna.NotFoundException;
-import qna.UnAuthorizedException;
-
 import java.util.Objects;
+import javax.persistence.*;
 
-public class Answer {
-    private Long id;
-    private Long writerId;
-    private Long questionId;
-    private String contents;
-    private boolean deleted = false;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import qna.exception.ExceptionWithMessageAndCode;
 
-    public Answer(User writer, Question question, String contents) {
-        this(null, writer, question, contents);
-    }
+@ToString
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@OnDelete(action = OnDeleteAction.CASCADE)
+@PrimaryKeyJoinColumn(foreignKey = @ForeignKey(name = "answer_fk_id"))
+@Entity
+public class Answer extends Content {
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        this.id = id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "answer_fk_question"))
+    private Question question;
 
-        if (Objects.isNull(writer)) {
-            throw new UnAuthorizedException();
-        }
-
+    @Builder
+    public Answer(Long id, User writer, Question question, String contents, boolean deleted) {
+        super(id, contents, writer, deleted);
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw ExceptionWithMessageAndCode.NOT_FOUND_QUESTION.getException();
         }
-
-        this.writerId = writer.getId();
-        this.questionId = question.getId();
-        this.contents = contents;
+        this.question = question;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writerId.equals(writer.getId());
-    }
-
-    public void toQuestion(Question question) {
-        this.questionId = question.getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getWriterId() {
-        return writerId;
-    }
-
-    public void setWriterId(Long writerId) {
-        this.writerId = writerId;
-    }
-
-    public Long getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Long questionId) {
-        this.questionId = questionId;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void changeQuestion(Question question) {
+        this.question = question;
     }
 
     @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", writerId=" + writerId +
-                ", questionId=" + questionId +
-                ", contents='" + contents + '\'' +
-                ", deleted=" + deleted +
-                '}';
+    public void validateDelete(User user) {
+        if (!isOwner(user) || user.isGuestUser()) {
+            throw ExceptionWithMessageAndCode.UNAUTHORIZED_FOR_ANSWER.getException();
+        }
     }
 }
