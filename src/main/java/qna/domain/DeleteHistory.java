@@ -41,14 +41,11 @@ public class DeleteHistory extends BaseTimeEntity {
             return false;
         }
         DeleteHistory that = (DeleteHistory) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(contentType, that.contentType) &&
-                Objects.equals(contentId, that.contentId) &&
-                Objects.equals(deleteById, that.deleteById);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, contentType, contentId, deleteById);
+        return Objects.hash(id);
     }
 }
