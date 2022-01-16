@@ -16,13 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import qna.CannotDeleteException;
 import qna.domain.model.Answer;
 import qna.domain.model.ContentType;
 import qna.domain.model.DeleteHistory;
 import qna.domain.model.Question;
 import qna.domain.repository.AnswerRepository;
 import qna.domain.repository.QuestionRepository;
+import qna.exception.CustomException;
+import qna.exception.ErrorCode;
 import qna.fixture.QuestionFixture;
 import qna.fixture.UserFixture;
 
@@ -69,11 +70,12 @@ class QnaServiceTest {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.SANJIGI, question.getId()))
-            .isInstanceOf(CannotDeleteException.class);
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.CANNOT_DELETE_QUESTION.getMessage());
     }
 
     @Test
-    public void delete_성공_질문자_답변자_같음() throws Exception {
+    public void delete_성공_질문자_답변자_같음() {
         when(questionRepository.findByIdAndDeletedFalse(question.getId())).thenReturn(Optional.of(question));
         when(answerRepository.findByQuestionIdAndDeletedFalse(question.getId())).thenReturn(Arrays.asList(answer));
 
@@ -94,7 +96,8 @@ class QnaServiceTest {
             Arrays.asList(answer, answer2));
 
         assertThatThrownBy(() -> qnaService.deleteQuestion(UserFixture.JAVAJIGI, question.getId()))
-            .isInstanceOf(CannotDeleteException.class);
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.CANNOT_DELETE_ANSWER.getMessage());
     }
 
     private void verifyDeleteHistories() {

@@ -1,5 +1,8 @@
 package qna.domain.model;
 
+import static qna.exception.ErrorCode.CANNOT_DELETE_ANSWER;
+import static qna.exception.ErrorCode.NOT_FOUND_CONTENTS;
+
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,8 +16,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.CannotDeleteException;
-import qna.NotFoundException;
+import qna.exception.CustomException;
 
 @Getter
 @Entity
@@ -35,7 +37,7 @@ public class Answer {
     @Builder
     public Answer(Long id, User writer, Question question, String contents) {
         if (Objects.isNull(question)) {
-            throw new NotFoundException();
+            throw new CustomException(NOT_FOUND_CONTENTS);
         }
         this.id = id;
         this.question = question;
@@ -49,8 +51,8 @@ public class Answer {
         this.question = question;
     }
 
-    public void delete(User loginUser, DeleteHistories deleteHistories) throws CannotDeleteException {
-        contents.validateOwner(loginUser, "다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+    public void delete(User loginUser, DeleteHistories deleteHistories) {
+        contents.validateOwner(loginUser, CANNOT_DELETE_ANSWER);
         contents.changeDeleted(true);
         deleteHistories.addAnswerDeleteHistories(loginUser, this);
     }

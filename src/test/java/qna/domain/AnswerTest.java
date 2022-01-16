@@ -2,18 +2,18 @@ package qna.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static qna.domain.model.ContentType.ANSWER;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 import qna.domain.model.Answer;
 import qna.domain.model.DeleteHistories;
 import qna.domain.model.Question;
 import qna.domain.model.User;
+import qna.exception.CustomException;
+import qna.exception.ErrorCode;
 
 @DisplayName("Answer POJO 테스트")
 public class AnswerTest {
@@ -55,7 +55,7 @@ public class AnswerTest {
 
     @Test
     @DisplayName("답변 삭제 테스트 성공")
-    void delete_success() throws CannotDeleteException {
+    void delete_success() {
         DeleteHistories deleteHistories = DeleteHistories.empty();
 
         answer.delete(user1, deleteHistories);
@@ -74,7 +74,7 @@ public class AnswerTest {
     @DisplayName("답변 삭제 테스트 실패 - 다른 사람이 쓴 답변이 있어 삭제할 수 없습니다")
     void delete_fail() {
         assertThatThrownBy(() -> answer.delete(user2, DeleteHistories.empty()))
-            .isInstanceOf(CannotDeleteException.class)
-            .hasMessage("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.CANNOT_DELETE_ANSWER.getMessage());
     }
 }

@@ -1,5 +1,7 @@
 package qna.domain.model;
 
+import static qna.exception.ErrorCode.USER_ACCESS_DENIED;
+
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.UnAuthorizedException;
+import qna.exception.CustomException;
 
 @Getter
 @Entity
@@ -35,11 +37,11 @@ public class User {
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.userId)) {
-            throw new UnAuthorizedException();
+            throw new CustomException(USER_ACCESS_DENIED);
         }
 
         if (!matchPassword(target.password)) {
-            throw new UnAuthorizedException();
+            throw new CustomException(USER_ACCESS_DENIED);
         }
 
         this.name = target.name;

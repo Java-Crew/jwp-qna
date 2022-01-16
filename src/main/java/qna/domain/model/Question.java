@@ -1,5 +1,7 @@
 package qna.domain.model;
 
+import static qna.exception.ErrorCode.CANNOT_DELETE_QUESTION;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import qna.CannotDeleteException;
 
 @Getter
 @Entity
@@ -39,8 +40,8 @@ public class Question {
         answer.toQuestion(this);
     }
 
-    public void delete(User loginUser, DeleteHistories deleteHistories) throws CannotDeleteException {
-        contents.validateOwner(loginUser, "질문을 삭제할 권한이 없습니다.");
+    public void delete(User loginUser, DeleteHistories deleteHistories) {
+        contents.validateOwner(loginUser, CANNOT_DELETE_QUESTION);
         contents.changeDeleted(true);
         deleteHistories.addQuestionDeleteHistory(loginUser, this);
     }

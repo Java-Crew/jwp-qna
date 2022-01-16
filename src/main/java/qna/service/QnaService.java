@@ -1,17 +1,18 @@
 package qna.service;
 
+import static qna.exception.ErrorCode.NOT_FOUND_CONTENTS;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.CannotDeleteException;
-import qna.NotFoundException;
 import qna.domain.model.Answer;
 import qna.domain.model.DeleteHistories;
 import qna.domain.model.Question;
 import qna.domain.model.User;
 import qna.domain.repository.AnswerRepository;
 import qna.domain.repository.QuestionRepository;
+import qna.exception.CustomException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +25,11 @@ public class QnaService {
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
-            .orElseThrow(NotFoundException::new);
+            .orElseThrow(() -> new CustomException(NOT_FOUND_CONTENTS));
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+    public void deleteQuestion(User loginUser, Long questionId) {
         DeleteHistories deleteHistories = DeleteHistories.empty();
 
         Question question = findQuestionById(questionId);

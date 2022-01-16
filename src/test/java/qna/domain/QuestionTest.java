@@ -9,10 +9,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import qna.CannotDeleteException;
 import qna.domain.model.DeleteHistories;
 import qna.domain.model.Question;
 import qna.domain.model.User;
+import qna.exception.CustomException;
+import qna.exception.ErrorCode;
 
 @DisplayName("Question POJO 테스트")
 public class QuestionTest {
@@ -47,7 +48,7 @@ public class QuestionTest {
 
     @Test
     @DisplayName("질문 삭제 테스트 성공")
-    void delete_success() throws CannotDeleteException {
+    void delete_success() {
         DeleteHistories deleteHistories = DeleteHistories.empty();
 
         question.delete(user1, deleteHistories);
@@ -66,7 +67,7 @@ public class QuestionTest {
     @DisplayName("질문 삭제 테스트 실패 - 질문을 삭제할 권한이 없습니다")
     void delete_fail() {
         assertThatThrownBy(() -> question.delete(user2, any()))
-            .isInstanceOf(CannotDeleteException.class)
-            .hasMessage("질문을 삭제할 권한이 없습니다.");
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.CANNOT_DELETE_QUESTION.getMessage());
     }
 }
