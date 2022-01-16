@@ -3,6 +3,7 @@ package qna.domain.model;
 import static qna.exception.ErrorCode.CANNOT_DELETE_ANSWER;
 import static qna.exception.ErrorCode.NOT_FOUND_CONTENTS;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ import qna.exception.CustomException;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Answer {
+public class Answer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,9 @@ public class Answer {
     private Contents contents;
 
     @Builder
-    public Answer(Long id, User writer, Question question, String contents) {
+    public Answer(Long id, User writer, Question question, String contents, LocalDateTime createdDate,
+        LocalDateTime lastModifiedDate) {
+        super(createdDate, lastModifiedDate);
         if (Objects.isNull(question)) {
             throw new CustomException(NOT_FOUND_CONTENTS);
         }

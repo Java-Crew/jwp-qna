@@ -2,7 +2,7 @@ package qna.domain.model;
 
 import static qna.exception.ErrorCode.USER_ACCESS_DENIED;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +16,7 @@ import qna.exception.CustomException;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,9 @@ public class User {
     private String email;
 
     @Builder
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(Long id, String userId, String password, String name, String email, LocalDateTime createdDate,
+        LocalDateTime lastModifiedDate) {
+        super(createdDate, lastModifiedDate);
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -54,12 +56,5 @@ public class User {
 
     public boolean matchPassword(String targetPassword) {
         return this.password.equals(targetPassword);
-    }
-
-    public boolean equalsNameAndEmail(User target) {
-        if (Objects.isNull(target)) {
-            return false;
-        }
-        return name.equals(target.name) && email.equals(target.email);
     }
 }

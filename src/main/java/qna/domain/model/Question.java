@@ -2,6 +2,7 @@ package qna.domain.model;
 
 import static qna.exception.ErrorCode.CANNOT_DELETE_QUESTION;
 
+import java.time.LocalDateTime;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question {
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,9 @@ public class Question {
     private Contents contents;
 
     @Builder
-    public Question(Long id, String title, User writer, String contents) {
+    public Question(Long id, String title, User writer, String contents, LocalDateTime createdDate,
+        LocalDateTime lastModifiedDate) {
+        super(createdDate, lastModifiedDate);
         this.id = id;
         this.title = title;
         this.contents = Contents.builder()

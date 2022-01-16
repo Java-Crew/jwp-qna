@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DeleteHistory {
+public class DeleteHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,14 +33,13 @@ public class DeleteHistory {
 
     private Long contentId;
 
-    private LocalDateTime createDate;
-
     @Builder
-    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createDate) {
+    public DeleteHistory(ContentType contentType, Long contentId, User deletedByUser, LocalDateTime createdDate,
+        LocalDateTime lastModifiedDate) {
+        super(createdDate, lastModifiedDate);
         this.contentType = contentType;
         this.contentId = contentId;
         this.deletedByUser = deletedByUser;
-        this.createDate = createDate;
     }
 
     public static DeleteHistory create(ContentType contentType, Long contentId, User deletedByUser) {
@@ -48,7 +47,6 @@ public class DeleteHistory {
             .contentType(contentType)
             .contentId(contentId)
             .deletedByUser(deletedByUser)
-            .createDate(LocalDateTime.now())
             .build();
     }
 
