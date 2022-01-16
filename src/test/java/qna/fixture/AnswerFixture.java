@@ -1,18 +1,31 @@
 package qna.fixture;
 
 import qna.domain.model.Answer;
+import qna.domain.model.Question;
+import qna.domain.model.User;
 
 public class AnswerFixture {
 
-    public static final Answer A1 = Answer.builder()
-        .writer(UserFixture.JAVAJIGI)
-        .question(QuestionFixture.Q1)
-        .contents("Answers Contents1")
-        .build();
+    public static final String CONTENTS = "contents";
 
-    public static final Answer A2 = Answer.builder()
-        .writer(UserFixture.SANJIGI)
-        .question(QuestionFixture.Q1)
-        .contents("Answers Contents2")
-        .build();
+    private static Long INCREASE_ID = 0L;
+
+    public static Answer getAnswer(User writer, Question question) {
+        INCREASE_ID++;
+        return Answer.builder()
+            .writer(writer)
+            .question(question)
+            .contents(CONTENTS + INCREASE_ID)
+            .build();
+    }
+
+    public static Answer getAnswerWithId(User writer, Question question) {
+        INCREASE_ID++;
+        return Answer.builder()
+            .id(INCREASE_ID)
+            .writer(writer)
+            .question(question)
+            .contents(CONTENTS + INCREASE_ID)
+            .build();
+    }
 }
