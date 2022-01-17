@@ -5,6 +5,7 @@ import static qna.fixture.AnswerFixture.getAnswer;
 import static qna.fixture.QuestionFixture.getQuestion;
 import static qna.fixture.UserFixture.getUser;
 
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,5 +45,12 @@ public class AnswerRepositoryTest extends RepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(answer.getContents()),
             () -> assertThat(actual.isDeleted()).isFalse()
         );
+    }
+
+    @Test
+    void Where_어노테이션이_정상적으로_작동하고_답변을_삭제하면_조회되지_않는다() {
+        answerRepository.deleteById(answer.getId());
+        List<Answer> actual = answerRepository.findAll();
+        assertThat(actual.size()).isEqualTo(0);
     }
 }

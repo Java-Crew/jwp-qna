@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static qna.fixture.QuestionFixture.getQuestion;
 import static qna.fixture.UserFixture.getUser;
 
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,5 +41,12 @@ public class QuestionRepositoryTest extends RepositoryTest {
             () -> assertThat(actual.getContents()).isEqualTo(question.getContents()),
             () -> assertThat(actual.isDeleted()).isFalse()
         );
+    }
+
+    @Test
+    void where_어노테이션이_정상적으로_작동하고_질문을_삭제하면_조회되지_않는다() {
+        questionRepository.deleteById(question.getId());
+        List<Question> actual = questionRepository.findAll();
+        assertThat(actual.size()).isEqualTo(0);
     }
 }
