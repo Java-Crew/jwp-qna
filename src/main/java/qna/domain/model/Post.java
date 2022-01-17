@@ -17,6 +17,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import qna.exception.CustomException;
 
 @Getter
@@ -25,6 +27,8 @@ import qna.exception.CustomException;
 @DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted=false")
+@SQLDelete(sql = "UPDATE post SET deleted = true WHERE id=?")
 public abstract class Post extends BaseEntity {
 
     @Id
