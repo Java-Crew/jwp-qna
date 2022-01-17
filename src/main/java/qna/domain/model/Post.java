@@ -3,21 +3,33 @@ package qna.domain.model;
 import static qna.exception.ErrorCode.USER_ACCESS_DENIED;
 
 import java.util.Objects;
-import javax.persistence.Embeddable;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import qna.exception.CustomException;
-import qna.exception.ErrorCode;
 
 @Getter
-@Embeddable
+@Entity
+@ToString
+@DiscriminatorColumn
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Contents {
+public abstract class Post extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
@@ -27,26 +39,18 @@ public class Contents {
 
     private boolean deleted = false;
 
-    @Builder
-    public Contents(User writer, String contents) {
+    public Post(Long id, User writer, String contents) {
         if (Objects.isNull(writer)) {
             throw new CustomException(USER_ACCESS_DENIED);
         }
+        this.id = id;
         this.writer = writer;
         this.contents = contents;
     }
 
-    public void validateOwner(User loginUser, ErrorCode errorCode) {
-        if (!isOwner(loginUser)) {
-            throw new CustomException(errorCode);
-        }
-    }
+    public abstract void validateDelete(User loginUser);
 
-    private boolean isOwner(User writer) {
+    public boolean isOwner(User writer) {
         return this.writer.matchUserId(writer.getUserId());
-    }
-
-    public void changeDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 }

@@ -3,14 +3,9 @@ package qna.domain.model;
 import static qna.exception.ErrorCode.CANNOT_DELETE_ANSWER;
 import static qna.exception.ErrorCode.NOT_FOUND_CONTENTS;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
@@ -22,41 +17,29 @@ import qna.exception.CustomException;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Answer extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Answer extends Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @Embedded
-    private Contents contents;
-
     @Builder
-    public Answer(Long id, User writer, Question question, String contents, LocalDateTime createdDate,
-        LocalDateTime lastModifiedDate) {
-        super(createdDate, lastModifiedDate);
+    public Answer(Long id, User writer, Question question, String contents) {
+        super(id, writer, contents);
         if (Objects.isNull(question)) {
             throw new CustomException(NOT_FOUND_CONTENTS);
         }
-        this.id = id;
         this.question = question;
-        this.contents = Contents.builder()
-            .writer(writer)
-            .contents(contents)
-            .build();
     }
 
     public void toQuestion(Question question) {
         this.question = question;
     }
 
-    public void delete(User loginUser, DeleteHistories deleteHistories) {
-        contents.validateOwner(loginUser, CANNOT_DELETE_ANSWER);
-        contents.changeDeleted(true);
-        deleteHistories.addAnswerDeleteHistories(loginUser, this);
+    @Override
+    public void validateDelete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new CustomException(CANNOT_DELETE_ANSWER);
+        }
     }
 }
