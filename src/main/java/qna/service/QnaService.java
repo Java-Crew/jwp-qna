@@ -1,58 +1,45 @@
 package qna.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static qna.exception.ErrorCode.NOT_FOUND_CONTENTS;
+
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import qna.CannotDeleteException;
-import qna.NotFoundException;
-import qna.domain.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import qna.domain.model.Answer;
+import qna.domain.model.DeleteHistories;
+import qna.domain.model.Question;
+import qna.domain.model.User;
+import qna.domain.repository.AnswerRepository;
+import qna.domain.repository.QuestionRepository;
+import qna.exception.CustomException;
 
 @Service
+@RequiredArgsConstructor
 public class QnaService {
-    private static final Logger log = LoggerFactory.getLogger(QnaService.class);
 
-    private QuestionRepository questionRepository;
-    private AnswerRepository answerRepository;
-    private DeleteHistoryService deleteHistoryService;
-
-    public QnaService(QuestionRepository questionRepository, AnswerRepository answerRepository, DeleteHistoryService deleteHistoryService) {
-        this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
-        this.deleteHistoryService = deleteHistoryService;
-    }
+    private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
+    private final DeleteHistoryService deleteHistoryService;
 
     @Transactional(readOnly = true)
     public Question findQuestionById(Long id) {
         return questionRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(NotFoundException::new);
+            .orElseThrow(() -> new CustomException(NOT_FOUND_CONTENTS));
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, Long questionId) throws CannotDeleteException {
+    public void deleteQuestion(User loginUser, Long questionId) {
+        DeleteHistories deleteHistories = DeleteHistories.empty();
+
         Question question = findQuestionById(questionId);
-        if (!question.isOwner(loginUser)) {
-            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
-        }
+        question.delete(loginUser, deleteHistories);
 
         List<Answer> answers = answerRepository.findByQuestionIdAndDeletedFalse(questionId);
         for (Answer answer : answers) {
-            if (!answer.isOwner(loginUser)) {
-                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
-            }
+            answer.delete(loginUser, deleteHistories);
         }
 
-        List<DeleteHistory> deleteHistories = new ArrayList<>();
-        question.setDeleted(true);
-        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, questionId, question.getWriterId(), LocalDateTime.now()));
-        for (Answer answer : answers) {
-            answer.setDeleted(true);
-            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriterId(), LocalDateTime.now()));
-        }
-        deleteHistoryService.saveAll(deleteHistories);
+        deleteHistoryService.saveAll(deleteHistories.getDeleteHistories());
     }
 }
